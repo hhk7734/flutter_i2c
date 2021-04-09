@@ -35,7 +35,7 @@ FlMethodResponse *transmit(FlValue *args) {
     int      addr = fl_value_get_int(fl_value_get_list_value(args, 1));
     uint8_t *buf  = const_cast<uint8_t *>(
         fl_value_get_uint8_list(fl_value_get_list_value(args, 2)));
-    int len = fl_value_get_int(fl_value_get_list_value(args, 3));
+    int len = fl_value_get_length(fl_value_get_list_value(args, 2));
 
     msgs.addr  = addr;
     msgs.flags = 0;
@@ -80,8 +80,8 @@ FlMethodResponse *transceive(FlValue *args) {
     int      addr   = fl_value_get_int(fl_value_get_list_value(args, 1));
     uint8_t *tx_buf = const_cast<uint8_t *>(
         fl_value_get_uint8_list(fl_value_get_list_value(args, 2)));
-    int      tx_len = fl_value_get_int(fl_value_get_list_value(args, 3));
-    int      rx_len = fl_value_get_int(fl_value_get_list_value(args, 4));
+    int      tx_len = fl_value_get_length(fl_value_get_list_value(args, 2));
+    int      rx_len = fl_value_get_int(fl_value_get_list_value(args, 3));
     uint8_t *rx_buf = (uint8_t *)malloc(rx_len);
 
     msgs[0].addr  = addr;

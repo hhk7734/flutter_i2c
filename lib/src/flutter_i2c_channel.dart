@@ -50,8 +50,7 @@ class FlutterI2c {
 
   static Future<void> transmit(
       int fd, int slaveAddress, Uint8List byteData) async {
-    await _channel.invokeMethod(
-        _transmitMethod, [fd, slaveAddress, byteData, byteData.length]);
+    await _channel.invokeMethod(_transmitMethod, [fd, slaveAddress, byteData]);
   }
 
   static Future<Uint8List> receive(int fd, int slaveAddress, int size) async {
@@ -62,8 +61,8 @@ class FlutterI2c {
 
   static Future<Uint8List> transceive(
       int fd, int slaveAddress, Uint8List txByteData, int rxSize) async {
-    final byteDAta = await _channel.invokeMethod(_transceiveMethod,
-        [fd, slaveAddress, txByteData, txByteData.length, rxSize]);
+    final byteDAta = await _channel.invokeMethod(
+        _transceiveMethod, [fd, slaveAddress, txByteData, rxSize]);
     return byteDAta;
   }
 
