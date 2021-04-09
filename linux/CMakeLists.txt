@@ -8,6 +8,7 @@ set(PLUGIN_NAME "flutter_i2c_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
     "flutter_i2c_plugin.cc"
+    "flutter_i2c_method.cc"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
