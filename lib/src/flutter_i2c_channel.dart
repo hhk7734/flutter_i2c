@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
@@ -28,6 +29,7 @@ const String _flutterI2cChannelName = 'flutter_i2c';
 
 const String _initMethod = 'init';
 const String _disposeMethod = 'dispose';
+const String _transmitMethod = 'transmit';
 
 class FlutterI2c {
   /// Private constructor.
@@ -42,6 +44,12 @@ class FlutterI2c {
     } on PlatformException catch (e) {
       throw 'Failed to open $device: ${e.message}';
     }
+  }
+
+  static Future<void> transmit(
+      int fd, int slaveAddress, Uint8List byteData) async {
+    await _channel.invokeMethod(
+        _transmitMethod, [fd, slaveAddress, byteData, byteData.length]);
   }
 
   static Future<void> dispose(int fd) async {

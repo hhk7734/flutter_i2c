@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'flutter_i2c_channel.dart';
 
 typedef OnI2cInitError = void Function(String errorMsg);
@@ -18,6 +20,10 @@ class I2c {
       onError?.call(e);
       return false;
     }
+  }
+
+  Future<void> transmit(int slaveAddress, Uint8List byteData) async {
+    await FlutterI2c.transmit(_fd, slaveAddress, byteData);
   }
 
   void dispose() {
