@@ -26,6 +26,11 @@ class I2c {
     await FlutterI2c.transmit(_fd, slaveAddress, byteData);
   }
 
+  Future<Uint8List> receive(int slaveAddress, int size) async {
+    final byteData = await FlutterI2c.receive(_fd, slaveAddress, size);
+    return byteData;
+  }
+
   void dispose() {
     FlutterI2c.dispose(_fd);
   }

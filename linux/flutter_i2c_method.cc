@@ -3,7 +3,8 @@
 #include "include/flutter_i2c/flutter_i2c_plugin.h"
 
 #include <cerrno>     //errno
-#include <cstring>    // strerror
+#include <cstdlib>    // free(), malloc()
+#include <cstring>    // strerror()
 #include <fcntl.h>    // open()
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
@@ -47,5 +48,28 @@ FlMethodResponse *transmit(FlValue *args) {
     ioctl(fd, I2C_RDWR, &i2c);
 
     return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse *receive(FlValue *args) {
+    struct i2c_rdwr_ioctl_data i2c;
+    struct i2c_msg             msgs;
+    int      fd   = fl_value_get_int(fl_value_get_list_value(args, 0));
+    int      addr = fl_value_get_int(fl_value_get_list_value(args, 1));
+    int      len  = fl_value_get_int(fl_value_get_list_value(args, 2));
+    uint8_t *buf  = (uint8_t *)malloc(len);
+
+    msgs.addr  = addr;
+    msgs.flags = I2C_M_RD;    // read
+    msgs.len   = len;
+    msgs.buf   = buf;
+
+    i2c.msgs  = &msgs;
+    i2c.nmsgs = 1;
+
+    ioctl(fd, I2C_RDWR, &i2c);
+
+    g_autoptr(FlValue) value = fl_value_new_uint8_list(buf, len);
+    free(buf);
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(value));
 }
 }    // namespace flutter_i2c
