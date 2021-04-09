@@ -24,8 +24,29 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+const String _flutterI2cChannelName = 'flutter_i2c';
+
+const String _initMethod = 'init';
+const String _disposeMethod = 'dispose';
+
 class FlutterI2c {
-  static const MethodChannel _channel = MethodChannel('flutter_i2c');
+  /// Private constructor.
+  FlutterI2c._();
+
+  static const MethodChannel _channel = MethodChannel(_flutterI2cChannelName);
+
+  static Future<int> init(String device) async {
+    try {
+      final fd = await _channel.invokeMethod(_initMethod, device);
+      return fd;
+    } on PlatformException catch (e) {
+      throw 'Failed to open $device: ${e.message}';
+    }
+  }
+
+  static Future<void> dispose(int fd) async {
+    await _channel.invokeMethod(_disposeMethod, fd);
+  }
 
   static Future<String> get platformVersion async {
     final version = await _channel.invokeMethod('getPlatformVersion');
