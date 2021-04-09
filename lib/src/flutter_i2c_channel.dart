@@ -47,9 +47,4 @@ class FlutterI2c {
   static Future<void> dispose(int fd) async {
     await _channel.invokeMethod(_disposeMethod, fd);
   }
-
-  static Future<String> get platformVersion async {
-    final version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
 }
