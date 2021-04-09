@@ -24,7 +24,9 @@ static void flutter_i2c_plugin_handle_method_call(FlutterI2cPlugin *self,
 
     g_autoptr(FlMethodResponse) response = nullptr;
 
-    if(strcmp(method, kTransmitMethod) == 0) {
+    if(strcmp(method, kTransceiveMethod) == 0) {
+        response = flutter_i2c::transceive(args);
+    } else if(strcmp(method, kTransmitMethod) == 0) {
         response = flutter_i2c::transmit(args);
     } else if(strcmp(method, kReceiveMethod) == 0) {
         response = flutter_i2c::receive(args);

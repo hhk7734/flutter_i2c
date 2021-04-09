@@ -8,14 +8,16 @@ const char kChannelName[] = "flutter_i2c";
 
 const char kRuntimeError[] = "Runtime Error";
 
-const char kInitMethod[]     = "init";
-const char kDisposeMethod[]  = "dispose";
-const char kTransmitMethod[] = "transmit";
-const char kReceiveMethod[]  = "receive";
+const char kInitMethod[]       = "init";
+const char kDisposeMethod[]    = "dispose";
+const char kTransmitMethod[]   = "transmit";
+const char kReceiveMethod[]    = "receive";
+const char kTransceiveMethod[] = "transceive";
 
 namespace flutter_i2c {
 FlMethodResponse *init(FlValue *args);
 FlMethodResponse *dispose(FlValue *args);
 FlMethodResponse *transmit(FlValue *args);
 FlMethodResponse *receive(FlValue *args);
+FlMethodResponse *transceive(FlValue *args);
 }    // namespace flutter_i2c

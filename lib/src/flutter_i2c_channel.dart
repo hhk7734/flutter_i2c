@@ -31,6 +31,7 @@ const String _initMethod = 'init';
 const String _disposeMethod = 'dispose';
 const String _transmitMethod = 'transmit';
 const String _receiveMethod = 'receive';
+const String _transceiveMethod = 'transceive';
 
 class FlutterI2c {
   /// Private constructor.
@@ -56,6 +57,13 @@ class FlutterI2c {
   static Future<Uint8List> receive(int fd, int slaveAddress, int size) async {
     final byteDAta =
         await _channel.invokeMethod(_receiveMethod, [fd, slaveAddress, size]);
+    return byteDAta;
+  }
+
+  static Future<Uint8List> transceive(
+      int fd, int slaveAddress, Uint8List txByteData, int rxSize) async {
+    final byteDAta = await _channel.invokeMethod(_transceiveMethod,
+        [fd, slaveAddress, txByteData, txByteData.length, rxSize]);
     return byteDAta;
   }
 
