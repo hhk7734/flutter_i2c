@@ -34,6 +34,14 @@ class I2c {
 
   I2c.fromBusNumber(int busNumber) : this('/dev/i2c-$busNumber');
 
+  /// Returns the device of this I2C.
+  String get device => _device;
+
+  /// Returns the file descriptor of this I2C.
+  ///
+  /// If the return is -1, [init] has not yet been called or has failed.
+  int get fd => _fd;
+
   Future<bool> init({OnI2cInitError onError}) async {
     try {
       _fd = await FlutterI2c.init(_device);
