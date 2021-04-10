@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 set(PROJECT_NAME "flutter_i2c")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-#This value is used when generating builds using this plugin, so it must
-#not be changed
+# This value is used when generating builds using this plugin, so it must
+# not be changed
 set(PLUGIN_NAME "flutter_i2c_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
@@ -18,8 +18,10 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 
-#List of absolute paths to libraries that should be bundled with the plugin
+# List of absolute paths to libraries that should be bundled with the plugin
 set(flutter_i2c_bundled_libraries
-    ""
+    "$<TARGET_FILE:lot_i2c>" # Library target name
     PARENT_SCOPE
 )
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lot_i2c")

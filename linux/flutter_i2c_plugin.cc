@@ -53,9 +53,27 @@ static void method_call_cb(FlMethodChannel *channel,
     flutter_i2c_plugin_handle_method_call(plugin, method_call);
 }
 
+static gchar *get_executable_dir() {
+    g_autoptr(GError) error    = nullptr;
+    g_autofree gchar *exe_path = g_file_read_link("/proc/self/exe", &error);
+    if(exe_path == nullptr) {
+        g_critical("Failed to determine location of executable: %s",
+                   error->message);
+        return nullptr;
+    }
+
+    return g_path_get_dirname(exe_path);
+}
+
+
 void flutter_i2c_plugin_register_with_registrar(FlPluginRegistrar *registrar) {
     FlutterI2cPlugin *plugin = FLUTTER_I2C_PLUGIN(
         g_object_new(flutter_i2c_plugin_get_type(), nullptr));
+
+    g_autofree gchar *executable_dir = get_executable_dir();
+    g_autofree gchar *liblot_i2c_path
+        = g_build_filename(executable_dir, "lib", "liblot_i2c.so", nullptr);
+    setenv("LIBLOT_I2C_PATH", liblot_i2c_path, 0);
 
     g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
     g_autoptr(FlMethodChannel) channel
