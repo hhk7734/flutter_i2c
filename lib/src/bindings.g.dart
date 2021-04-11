@@ -19,31 +19,28 @@ class LibLotI2c {
           lookup)
       : _lookup = lookup;
 
-  int lot_i2c_init(
+  int init(
     ffi.Pointer<ffi.Int8> device,
   ) {
-    return _lot_i2c_init(
+    return _init(
       device,
     );
   }
 
-  late final _lot_i2c_init_ptr =
-      _lookup<ffi.NativeFunction<_c_lot_i2c_init>>('lot_i2c_init');
-  late final _dart_lot_i2c_init _lot_i2c_init =
-      _lot_i2c_init_ptr.asFunction<_dart_lot_i2c_init>();
+  late final _init_ptr = _lookup<ffi.NativeFunction<_c_init>>('lot_i2c_init');
+  late final _dart_init _init = _init_ptr.asFunction<_dart_init>();
 
-  void lot_i2c_dispose(
+  void dispose(
     int fd,
   ) {
-    return _lot_i2c_dispose(
+    return _dispose(
       fd,
     );
   }
 
-  late final _lot_i2c_dispose_ptr =
-      _lookup<ffi.NativeFunction<_c_lot_i2c_dispose>>('lot_i2c_dispose');
-  late final _dart_lot_i2c_dispose _lot_i2c_dispose =
-      _lot_i2c_dispose_ptr.asFunction<_dart_lot_i2c_dispose>();
+  late final _dispose_ptr =
+      _lookup<ffi.NativeFunction<_c_dispose>>('lot_i2c_dispose');
+  late final _dart_dispose _dispose = _dispose_ptr.asFunction<_dart_dispose>();
 
   void transmit(
     int fd,
@@ -60,7 +57,7 @@ class LibLotI2c {
   }
 
   late final _transmit_ptr =
-      _lookup<ffi.NativeFunction<_c_transmit>>('transmit');
+      _lookup<ffi.NativeFunction<_c_transmit>>('lot_i2c_transmit');
   late final _dart_transmit _transmit =
       _transmit_ptr.asFunction<_dart_transmit>();
 
@@ -78,7 +75,8 @@ class LibLotI2c {
     );
   }
 
-  late final _receive_ptr = _lookup<ffi.NativeFunction<_c_receive>>('receive');
+  late final _receive_ptr =
+      _lookup<ffi.NativeFunction<_c_receive>>('lot_i2c_receive');
   late final _dart_receive _receive = _receive_ptr.asFunction<_dart_receive>();
 
   void transceive(
@@ -100,7 +98,7 @@ class LibLotI2c {
   }
 
   late final _transceive_ptr =
-      _lookup<ffi.NativeFunction<_c_transceive>>('transceive');
+      _lookup<ffi.NativeFunction<_c_transceive>>('lot_i2c_transceive');
   late final _dart_transceive _transceive =
       _transceive_ptr.asFunction<_dart_transceive>();
 }
@@ -305,19 +303,19 @@ const int WINT_MIN = 0;
 
 const int WINT_MAX = 4294967295;
 
-typedef _c_lot_i2c_init = ffi.Int32 Function(
+typedef _c_init = ffi.Int32 Function(
   ffi.Pointer<ffi.Int8> device,
 );
 
-typedef _dart_lot_i2c_init = int Function(
+typedef _dart_init = int Function(
   ffi.Pointer<ffi.Int8> device,
 );
 
-typedef _c_lot_i2c_dispose = ffi.Void Function(
+typedef _c_dispose = ffi.Void Function(
   ffi.Int32 fd,
 );
 
-typedef _dart_lot_i2c_dispose = void Function(
+typedef _dart_dispose = void Function(
   int fd,
 );
 
