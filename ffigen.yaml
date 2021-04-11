@@ -9,3 +9,6 @@ headers:
 functions:
   rename:
     "lot_i2c_(.*)": "$1"
+macros:
+  exclude:
+    - ".*"
