@@ -1,3 +1,5 @@
-## 0.0.1
+## 0.1.0
 
-* TODO: Describe initial release.
+- Change MethodChannel to ffi
+- linux: lot_i2c: add init() and dispose()
+- linux: lot_i2c: add transmit(), receive() and transceive()
