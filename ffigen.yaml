@@ -6,3 +6,6 @@ llvm-path:
 headers:
   entry-points:
     - "linux/lot_i2c/**.h"
+functions:
+  rename:
+    "lot_i2c_(.*)": "$1"
