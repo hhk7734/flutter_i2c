@@ -1,6 +1,6 @@
 name: flutter_i2c
-description: I2C
-version: 0.0.1
+description: "`flutter_i2c` is a library to communicate with i2c slave devices."
+version: 0.1.0
 repository: https://github.com/hhk7734/flutter_i2c
 
 environment:
@@ -13,8 +13,6 @@ dependencies:
   ffi: ^1.0.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   pedantic: ^1.11.0
   ffigen: ^2.4.2
 
