@@ -21,3 +21,15 @@
  * SOFTWARE.
  */
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int lot_i2c_init(const char *device);
+
+void lot_i2c_dispose(int fd);
+
+#ifdef __cplusplus
+}
+#endif

@@ -21,3 +21,10 @@
  * SOFTWARE.
  */
 #include "lot_i2c.h"
+
+#include <fcntl.h>     // open()
+#include <unistd.h>    // close()
+
+int lot_i2c_init(const char *device) { return open(device, O_RDWR); }
+
+void lot_i2c_dispose(int fd) { close(fd); }
