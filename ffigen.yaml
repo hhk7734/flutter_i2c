@@ -1,0 +1,8 @@
+name: "LibLotI2c"
+description: "Bindings to `liblot_i2c`"
+output: "lib/src/bindings.g.dart"
+llvm-path:
+  - "/opt/toolchain/clang/11"
+headers:
+  entry-points:
+    - "linux/lot_i2c/**.h"
