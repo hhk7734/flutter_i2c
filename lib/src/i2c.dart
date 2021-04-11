@@ -20,15 +20,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import 'dart:async';
+import 'dart:io';
+import 'dart:ffi' as ffi;
+import 'package:ffi/ffi.dart';
 
-import 'package:flutter/services.dart';
+import 'bindings.g.dart';
 
-class FlutterI2c {
-  static const MethodChannel _channel = MethodChannel('flutter_i2c');
+LibLotI2c? _libLotI2c;
+LibLotI2c get libLotI2c {
+  final path = Platform.environment['LIBLOT_I2C_PATH'];
+  return _libLotI2c ??= path != null
+      ? LibLotI2c(ffi.DynamicLibrary.open(path))
+      : LibLotI2c(ffi.DynamicLibrary.process());
+}
 
-  static Future<String> get platformVersion async {
-    final version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
+class I2c {
+  final String device;
+  late final int fd;
+  final _native = libLotI2c;
+
+  I2c(this.device);
+
+  I2c.fromBusNumber(int busNumber) : this('/dev/i2c-$busNumber');
+
+  bool init() {
+    final cDevice = device.toNativeUtf8();
+    fd = _native.lot_i2c_init(cDevice.cast<ffi.Int8>());
+    return fd >= 0 ? true : false;
+  }
+
+  void dispose() {
+    if (fd >= 0) _native.lot_i2c_dispose(fd);
   }
 }

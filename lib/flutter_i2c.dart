@@ -1,1 +1,1 @@
-export 'src/flutter_i2c_channel.dart';
+export 'src/i2c.dart';
