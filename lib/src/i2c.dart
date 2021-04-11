@@ -101,6 +101,37 @@ class I2c {
     return rxBuf;
   }
 
+  int readByteReg(int slaveAddress, int register) {
+    final _buf = malloc.allocate<ffi.Uint8>(1);
+
+    _buf.value = register;
+
+    _native.transceive(fd, slaveAddress, _buf, 1, _buf, 1);
+
+    final rxBuf = _buf.value;
+
+    malloc.free(_buf);
+
+    return rxBuf;
+  }
+
+  Uint8List readByteListReg(int slaveAddress, int register, int rxSize) {
+    final _buf = malloc.allocate<ffi.Uint8>(rxSize);
+    final rxBuf = Uint8List(rxSize);
+
+    _buf.value = register;
+
+    _native.transceive(fd, slaveAddress, _buf, 1, _buf, rxSize);
+
+    for (var index = 0; index < rxSize; index++) {
+      rxBuf[index] = _buf[index];
+    }
+
+    malloc.free(_buf);
+
+    return rxBuf;
+  }
+
   void dispose() {
     if (fd >= 0) _native.dispose(fd);
   }
