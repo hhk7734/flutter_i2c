@@ -101,6 +101,31 @@ class I2c {
     return rxBuf;
   }
 
+  void writeByteReg(int slaveAddress, int register, int value) {
+    final _txBuf = malloc.allocate<ffi.Uint8>(2);
+
+    _txBuf[0] = register;
+    _txBuf[1] = value;
+
+    _native.transmit(fd, slaveAddress, _txBuf, 2);
+
+    malloc.free(_txBuf);
+  }
+
+  void writeByteListReg(int slaveAddress, int register, Uint8List txBuf) {
+    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length + 1);
+    var index = 0;
+
+    _txBuf[index++] = register;
+    for (var value in txBuf) {
+      _txBuf[index++] = value;
+    }
+
+    _native.transmit(fd, slaveAddress, _txBuf, index);
+
+    malloc.free(_txBuf);
+  }
+
   int readByteReg(int slaveAddress, int register) {
     final _buf = malloc.allocate<ffi.Uint8>(1);
 
