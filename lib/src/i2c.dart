@@ -22,6 +22,8 @@
  */
 import 'dart:io';
 import 'dart:ffi' as ffi;
+import 'dart:typed_data';
+
 import 'package:ffi/ffi.dart';
 
 import 'bindings.g.dart';
@@ -47,6 +49,56 @@ class I2c {
     final cDevice = device.toNativeUtf8();
     fd = _native.lot_i2c_init(cDevice.cast<ffi.Int8>());
     return fd >= 0 ? true : false;
+  }
+
+  void transmit(int slaveAddress, Uint8List txBuf) {
+    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length);
+    var index = 0;
+
+    for (var value in txBuf) {
+      _txBuf[index++] = value;
+    }
+
+    _native.transmit(fd, slaveAddress, _txBuf, txBuf.length);
+
+    malloc.free(_txBuf);
+  }
+
+  Uint8List receive(int slaveAddress, int rxSize) {
+    final _rxBuf = malloc.allocate<ffi.Uint8>(rxSize);
+    final rxBuf = Uint8List(rxSize);
+
+    _native.receive(fd, slaveAddress, _rxBuf, rxSize);
+
+    for (var index = 0; index < rxSize; index++) {
+      rxBuf[index] = _rxBuf[index];
+    }
+
+    malloc.free(_rxBuf);
+
+    return rxBuf;
+  }
+
+  Uint8List transceive(int slaveAddress, Uint8List txBuf, int rxSize) {
+    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length);
+    final _rxBuf = malloc.allocate<ffi.Uint8>(rxSize);
+    final rxBuf = Uint8List(rxSize);
+    var index = 0;
+
+    for (var value in txBuf) {
+      _txBuf[index++] = value;
+    }
+
+    _native.transceive(fd, slaveAddress, _txBuf, txBuf.length, _rxBuf, rxSize);
+
+    for (var index = 0; index < rxSize; index++) {
+      rxBuf[index] = _rxBuf[index];
+    }
+
+    malloc.free(_txBuf);
+    malloc.free(_rxBuf);
+
+    return rxBuf;
   }
 
   void dispose() {
