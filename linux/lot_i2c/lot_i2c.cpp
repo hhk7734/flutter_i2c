@@ -22,9 +22,67 @@
  */
 #include "lot_i2c.h"
 
-#include <fcntl.h>     // open()
-#include <unistd.h>    // close()
+#include <fcntl.h>    // open()
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
+#include <sys/ioctl.h>    // ioctl()
+#include <unistd.h>       // close()
 
 int lot_i2c_init(const char *device) { return open(device, O_RDWR); }
 
 void lot_i2c_dispose(int fd) { close(fd); }
+
+void transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size) {
+    struct i2c_rdwr_ioctl_data i2c;
+    struct i2c_msg             msgs;
+
+    msgs.addr  = slaveAddress;
+    msgs.flags = 0;
+    msgs.len   = tx_size;
+    msgs.buf   = tx_buf;
+
+    i2c.msgs  = &msgs;
+    i2c.nmsgs = 1;
+
+    ioctl(fd, I2C_RDWR, &i2c);
+}
+
+void receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size) {
+    struct i2c_rdwr_ioctl_data i2c;
+    struct i2c_msg             msgs;
+
+    msgs.addr  = slaveAddress;
+    msgs.flags = I2C_M_RD;    // read
+    msgs.len   = rx_size;
+    msgs.buf   = rx_buf;
+
+    i2c.msgs  = &msgs;
+    i2c.nmsgs = 1;
+
+    ioctl(fd, I2C_RDWR, &i2c);
+}
+
+void transceive(int      fd,
+                int      slaveAddress,
+                uint8_t *tx_buf,
+                int      tx_size,
+                uint8_t *rx_buf,
+                int      rx_size) {
+    struct i2c_rdwr_ioctl_data i2c;
+    struct i2c_msg             msgs[2];
+
+    msgs[0].addr  = slaveAddress;
+    msgs[0].flags = 0;    // write
+    msgs[0].len   = tx_size;
+    msgs[0].buf   = tx_buf;
+
+    msgs[1].addr  = slaveAddress;
+    msgs[1].flags = I2C_M_RD;    // read
+    msgs[1].len   = rx_size;
+    msgs[1].buf   = rx_buf;
+
+    i2c.msgs  = msgs;
+    i2c.nmsgs = 2;
+
+    ioctl(fd, I2C_RDWR, &i2c);
+}
