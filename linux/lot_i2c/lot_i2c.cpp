@@ -32,7 +32,7 @@ int lot_i2c_init(const char *device) { return open(device, O_RDWR); }
 
 void lot_i2c_dispose(int fd) { close(fd); }
 
-void transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size) {
+void lot_i2c_transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size) {
     struct i2c_rdwr_ioctl_data i2c;
     struct i2c_msg             msgs;
 
@@ -47,7 +47,7 @@ void transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size) {
     ioctl(fd, I2C_RDWR, &i2c);
 }
 
-void receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size) {
+void lot_i2c_receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size) {
     struct i2c_rdwr_ioctl_data i2c;
     struct i2c_msg             msgs;
 
@@ -62,12 +62,12 @@ void receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size) {
     ioctl(fd, I2C_RDWR, &i2c);
 }
 
-void transceive(int      fd,
-                int      slaveAddress,
-                uint8_t *tx_buf,
-                int      tx_size,
-                uint8_t *rx_buf,
-                int      rx_size) {
+void lot_i2c_transceive(int      fd,
+                        int      slaveAddress,
+                        uint8_t *tx_buf,
+                        int      tx_size,
+                        uint8_t *rx_buf,
+                        int      rx_size) {
     struct i2c_rdwr_ioctl_data i2c;
     struct i2c_msg             msgs[2];
 

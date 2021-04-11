@@ -32,16 +32,16 @@ int lot_i2c_init(const char *device);
 
 void lot_i2c_dispose(int fd);
 
-void transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size);
+void lot_i2c_transmit(int fd, int slaveAddress, uint8_t *tx_buf, int tx_size);
 
-void receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size);
+void lot_i2c_receive(int fd, int slaveAddress, uint8_t *rx_buf, int rx_size);
 
-void transceive(int      fd,
-                int      slaveAddress,
-                uint8_t *tx_buf,
-                int      tx_size,
-                uint8_t *rx_buf,
-                int      rx_size);
+void lot_i2c_transceive(int      fd,
+                        int      slaveAddress,
+                        uint8_t *tx_buf,
+                        int      tx_size,
+                        uint8_t *rx_buf,
+                        int      rx_size);
 
 #ifdef __cplusplus
 }
