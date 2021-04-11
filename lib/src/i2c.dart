@@ -47,7 +47,7 @@ class I2c {
 
   bool init() {
     final cDevice = device.toNativeUtf8();
-    fd = _native.lot_i2c_init(cDevice.cast<ffi.Int8>());
+    fd = _native.init(cDevice.cast<ffi.Int8>());
     return fd >= 0 ? true : false;
   }
 
@@ -102,6 +102,6 @@ class I2c {
   }
 
   void dispose() {
-    if (fd >= 0) _native.lot_i2c_dispose(fd);
+    if (fd >= 0) _native.dispose(fd);
   }
 }
