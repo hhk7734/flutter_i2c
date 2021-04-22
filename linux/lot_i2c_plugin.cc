@@ -1,23 +1,22 @@
-#include "include/flutter_i2c/flutter_i2c_plugin.h"
+#include "include/lot_i2c/lot_i2c_plugin.h"
 
 #include <cstring>
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 #include <sys/utsname.h>
 
-#define FLUTTER_I2C_PLUGIN(obj)  \
-    (G_TYPE_CHECK_INSTANCE_CAST( \
-        (obj), flutter_i2c_plugin_get_type(), FlutterI2cPlugin))
+#define LOT_I2C_PLUGIN(obj) \
+    (G_TYPE_CHECK_INSTANCE_CAST((obj), lot_i2c_plugin_get_type(), LotI2cPlugin))
 
-struct _FlutterI2cPlugin {
+struct _LotI2cPlugin {
     GObject parent_instance;
 };
 
-G_DEFINE_TYPE(FlutterI2cPlugin, flutter_i2c_plugin, g_object_get_type())
+G_DEFINE_TYPE(LotI2cPlugin, lot_i2c_plugin, g_object_get_type())
 
 // Called when a method call is received from Flutter.
-static void flutter_i2c_plugin_handle_method_call(FlutterI2cPlugin *self,
-                                                  FlMethodCall *method_call) {
+static void lot_i2c_plugin_handle_method_call(LotI2cPlugin *self,
+                                              FlMethodCall *method_call) {
     g_autoptr(FlMethodResponse) response = nullptr;
 
     const gchar *method = fl_method_call_get_name(method_call);
@@ -36,21 +35,21 @@ static void flutter_i2c_plugin_handle_method_call(FlutterI2cPlugin *self,
     fl_method_call_respond(method_call, response, nullptr);
 }
 
-static void flutter_i2c_plugin_dispose(GObject *object) {
-    G_OBJECT_CLASS(flutter_i2c_plugin_parent_class)->dispose(object);
+static void lot_i2c_plugin_dispose(GObject *object) {
+    G_OBJECT_CLASS(lot_i2c_plugin_parent_class)->dispose(object);
 }
 
-static void flutter_i2c_plugin_class_init(FlutterI2cPluginClass *klass) {
-    G_OBJECT_CLASS(klass)->dispose = flutter_i2c_plugin_dispose;
+static void lot_i2c_plugin_class_init(LotI2cPluginClass *klass) {
+    G_OBJECT_CLASS(klass)->dispose = lot_i2c_plugin_dispose;
 }
 
-static void flutter_i2c_plugin_init(FlutterI2cPlugin *self) {}
+static void lot_i2c_plugin_init(LotI2cPlugin *self) {}
 
 static void method_call_cb(FlMethodChannel *channel,
                            FlMethodCall *   method_call,
                            gpointer         user_data) {
-    FlutterI2cPlugin *plugin = FLUTTER_I2C_PLUGIN(user_data);
-    flutter_i2c_plugin_handle_method_call(plugin, method_call);
+    LotI2cPlugin *plugin = LOT_I2C_PLUGIN(user_data);
+    lot_i2c_plugin_handle_method_call(plugin, method_call);
 }
 
 static gchar *get_executable_dir() {
@@ -66,9 +65,9 @@ static gchar *get_executable_dir() {
 }
 
 
-void flutter_i2c_plugin_register_with_registrar(FlPluginRegistrar *registrar) {
-    FlutterI2cPlugin *plugin = FLUTTER_I2C_PLUGIN(
-        g_object_new(flutter_i2c_plugin_get_type(), nullptr));
+void lot_i2c_plugin_register_with_registrar(FlPluginRegistrar *registrar) {
+    LotI2cPlugin *plugin
+        = LOT_I2C_PLUGIN(g_object_new(lot_i2c_plugin_get_type(), nullptr));
 
     g_autofree gchar *executable_dir = get_executable_dir();
     g_autofree gchar *liblot_i2c_path
@@ -78,7 +77,7 @@ void flutter_i2c_plugin_register_with_registrar(FlPluginRegistrar *registrar) {
     g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
     g_autoptr(FlMethodChannel) channel
         = fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
-                                "flutter_i2c",
+                                "lot_i2c",
                                 FL_METHOD_CODEC(codec));
     fl_method_channel_set_method_call_handler(
         channel, method_call_cb, g_object_ref(plugin), g_object_unref);

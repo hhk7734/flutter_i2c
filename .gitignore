@@ -4,8 +4,11 @@
 .packages
 .pub/
 
+.flutter-plugins
+.flutter-plugins-dependencies
 .vscode/settings.json
 
 build/
 
 example/
+linux/flutter/

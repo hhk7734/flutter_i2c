@@ -1,7 +1,7 @@
-name: flutter_i2c
-description: "`flutter_i2c` is a library to communicate with i2c slave devices."
+name: lot_i2c
+description: "`lot_i2c` is a library to communicate with i2c slave devices."
 version: 0.2.0
-repository: https://github.com/hhk7734/flutter_i2c
+repository: https://github.com/hhk7734/flutter_lot_i2c
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -20,4 +20,4 @@ flutter:
   plugin:
     platforms:
       linux:
-        pluginClass: FlutterI2cPlugin
+        pluginClass: LotI2cPlugin
