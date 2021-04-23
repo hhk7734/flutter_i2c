@@ -37,7 +37,7 @@ LibLotI2c get libLotI2c {
 }
 
 class I2c {
-  final String device;
+  String device;
   late final int fd;
   final _native = libLotI2c;
 
