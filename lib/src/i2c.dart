@@ -160,6 +160,9 @@ class I2c {
   }
 
   void dispose() {
-    if (_fd >= 0) _native.dispose(_fd);
+    if (_fd >= 0) {
+      _native.dispose(_fd);
+      _fd = -1;
+    }
   }
 }
