@@ -47,10 +47,14 @@ class I2c {
 
   int get fd => _fd;
 
-  bool init() {
+  void init() {
+    dispose();
+
     final cDevice = device.toNativeUtf8();
     _fd = _native.init(cDevice.cast<ffi.Int8>());
-    return _fd >= 0 ? true : false;
+    if (_fd < 0) {
+      throw 'Failed to open $device';
+    }
   }
 
   void transmit(int slaveAddress, Uint8List txBuf) {
