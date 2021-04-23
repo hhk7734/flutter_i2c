@@ -38,17 +38,19 @@ LibLotI2c get libLotI2c {
 
 class I2c {
   String device;
-  late final int fd;
+  int _fd = -1;
   final _native = libLotI2c;
 
   I2c(this.device);
 
   I2c.fromBusNumber(int busNumber) : this('/dev/i2c-$busNumber');
 
+  int get fd => _fd;
+
   bool init() {
     final cDevice = device.toNativeUtf8();
-    fd = _native.init(cDevice.cast<ffi.Int8>());
-    return fd >= 0 ? true : false;
+    _fd = _native.init(cDevice.cast<ffi.Int8>());
+    return _fd >= 0 ? true : false;
   }
 
   void transmit(int slaveAddress, Uint8List txBuf) {
@@ -59,7 +61,7 @@ class I2c {
       _txBuf[index++] = value;
     }
 
-    _native.transmit(fd, slaveAddress, _txBuf, txBuf.length);
+    _native.transmit(_fd, slaveAddress, _txBuf, txBuf.length);
 
     malloc.free(_txBuf);
   }
@@ -68,7 +70,7 @@ class I2c {
     final _rxBuf = malloc.allocate<ffi.Uint8>(rxSize);
     final rxBuf = Uint8List(rxSize);
 
-    _native.receive(fd, slaveAddress, _rxBuf, rxSize);
+    _native.receive(_fd, slaveAddress, _rxBuf, rxSize);
 
     for (var index = 0; index < rxSize; index++) {
       rxBuf[index] = _rxBuf[index];
@@ -89,7 +91,7 @@ class I2c {
       _txBuf[index++] = value;
     }
 
-    _native.transceive(fd, slaveAddress, _txBuf, txBuf.length, _rxBuf, rxSize);
+    _native.transceive(_fd, slaveAddress, _txBuf, txBuf.length, _rxBuf, rxSize);
 
     for (var index = 0; index < rxSize; index++) {
       rxBuf[index] = _rxBuf[index];
@@ -107,7 +109,7 @@ class I2c {
     _txBuf[0] = register;
     _txBuf[1] = value;
 
-    _native.transmit(fd, slaveAddress, _txBuf, 2);
+    _native.transmit(_fd, slaveAddress, _txBuf, 2);
 
     malloc.free(_txBuf);
   }
@@ -121,7 +123,7 @@ class I2c {
       _txBuf[index++] = value;
     }
 
-    _native.transmit(fd, slaveAddress, _txBuf, index);
+    _native.transmit(_fd, slaveAddress, _txBuf, index);
 
     malloc.free(_txBuf);
   }
@@ -131,7 +133,7 @@ class I2c {
 
     _buf.value = register;
 
-    _native.transceive(fd, slaveAddress, _buf, 1, _buf, 1);
+    _native.transceive(_fd, slaveAddress, _buf, 1, _buf, 1);
 
     final rxBuf = _buf.value;
 
@@ -146,7 +148,7 @@ class I2c {
 
     _buf.value = register;
 
-    _native.transceive(fd, slaveAddress, _buf, 1, _buf, rxSize);
+    _native.transceive(_fd, slaveAddress, _buf, 1, _buf, rxSize);
 
     for (var index = 0; index < rxSize; index++) {
       rxBuf[index] = _buf[index];
@@ -158,6 +160,6 @@ class I2c {
   }
 
   void dispose() {
-    if (fd >= 0) _native.dispose(fd);
+    if (_fd >= 0) _native.dispose(_fd);
   }
 }
