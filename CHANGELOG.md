@@ -1,3 +1,10 @@
+## 0.4.0
+
+- linux: lot*i2c_plugin: add `lot_i2c*\*`functions to`handle_method_call`
+- lib: src: lot_i2c_channel: init
+- lib: src: i2c: change ffi to MethodChannel
+- ffigen: change name
+
 ## 0.3.0
 
 - Change package name from `flutter_i2c` to `lot_i2c`
