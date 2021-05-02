@@ -51,12 +51,12 @@ static void lot_i2c_plugin_handle_method_call(LotI2cPlugin *self,
     if(strcmp(method, kInitMethod) == 0) {
         int fd = lot_i2c_init(fl_value_get_string(args));
         if(fd < 0) {
-            return FL_METHOD_RESPONSE(fl_method_error_response_new(
+            response = FL_METHOD_RESPONSE(fl_method_error_response_new(
                 kRuntimeError, strerror(errno), nullptr));
+        } else {
+            response = FL_METHOD_RESPONSE(
+                fl_method_success_response_new(fl_value_new_int(fd)));
         }
-
-        response = FL_METHOD_RESPONSE(
-            fl_method_success_response_new(fl_value_new_int(fd)));
     } else if(strcmp(method, kDisposeMethod) == 0) {
         lot_i2c_dispose(fl_value_get_int(args));
 
