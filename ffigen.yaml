@@ -1,4 +1,4 @@
-name: "LibLotI2c"
+name: "LotI2cNative"
 description: "Bindings to `liblot_i2c`"
 output: "lib/src/bindings.g.dart"
 llvm-path:
