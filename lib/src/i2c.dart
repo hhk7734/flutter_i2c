@@ -9,8 +9,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,25 +21,23 @@
  * SOFTWARE.
  */
 import 'dart:io';
-import 'dart:ffi' as ffi;
+import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
-
 import 'bindings.g.dart';
+import 'lot_i2c_channel.dart';
 
-LibLotI2c? _libLotI2c;
-LibLotI2c get libLotI2c {
+LotI2cNative? _libLotI2c;
+LotI2cNative get libLotI2c {
   final path = Platform.environment['LIBLOT_I2C_PATH'];
   return _libLotI2c ??= path != null
-      ? LibLotI2c(ffi.DynamicLibrary.open(path))
-      : LibLotI2c(ffi.DynamicLibrary.process());
+      ? LotI2cNative(DynamicLibrary.open(path))
+      : LotI2cNative(DynamicLibrary.process());
 }
 
 class I2c {
   String device;
   int _fd = -1;
-  final _native = libLotI2c;
 
   I2c(this.device);
 
@@ -47,125 +45,54 @@ class I2c {
 
   int get fd => _fd;
 
-  void init() {
-    dispose();
-
-    final cDevice = device.toNativeUtf8();
-    _fd = _native.init(cDevice.cast<ffi.Int8>());
-    if (_fd < 0) {
-      throw 'Failed to open $device';
-    }
+  Future<void> init() async {
+    await dispose();
+    _fd = await LotI2cChannel.init(device);
   }
 
-  void transmit(int slaveAddress, Uint8List txBuf) {
-    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length);
-    var index = 0;
-
-    for (var value in txBuf) {
-      _txBuf[index++] = value;
-    }
-
-    _native.transmit(_fd, slaveAddress, _txBuf, txBuf.length);
-
-    malloc.free(_txBuf);
+  Future<void> transmit(int slaveAddress, Uint8List txBuf) async {
+    await LotI2cChannel.transmit(_fd, slaveAddress, txBuf);
   }
 
-  Uint8List receive(int slaveAddress, int rxSize) {
-    final _rxBuf = malloc.allocate<ffi.Uint8>(rxSize);
-    final rxBuf = Uint8List(rxSize);
-
-    _native.receive(_fd, slaveAddress, _rxBuf, rxSize);
-
-    for (var index = 0; index < rxSize; index++) {
-      rxBuf[index] = _rxBuf[index];
-    }
-
-    malloc.free(_rxBuf);
-
+  Future<Uint8List> receive(int slaveAddress, int rxSize) async {
+    final rxBuf = await LotI2cChannel.receive(_fd, slaveAddress, rxSize);
     return rxBuf;
   }
 
-  Uint8List transceive(int slaveAddress, Uint8List txBuf, int rxSize) {
-    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length);
-    final _rxBuf = malloc.allocate<ffi.Uint8>(rxSize);
-    final rxBuf = Uint8List(rxSize);
-    var index = 0;
-
-    for (var value in txBuf) {
-      _txBuf[index++] = value;
-    }
-
-    _native.transceive(_fd, slaveAddress, _txBuf, txBuf.length, _rxBuf, rxSize);
-
-    for (var index = 0; index < rxSize; index++) {
-      rxBuf[index] = _rxBuf[index];
-    }
-
-    malloc.free(_txBuf);
-    malloc.free(_rxBuf);
-
+  Future<Uint8List> transceive(
+      int slaveAddress, Uint8List txBuf, int rxSize) async {
+    final rxBuf =
+        await LotI2cChannel.transceive(_fd, slaveAddress, txBuf, rxSize);
     return rxBuf;
   }
 
-  void writeByteReg(int slaveAddress, int register, int value) {
-    final _txBuf = malloc.allocate<ffi.Uint8>(2);
-
-    _txBuf[0] = register;
-    _txBuf[1] = value;
-
-    _native.transmit(_fd, slaveAddress, _txBuf, 2);
-
-    malloc.free(_txBuf);
+  Future<void> writeByteReg(int slaveAddress, int register, int value) async {
+    await transmit(slaveAddress, Uint8List.fromList([register, value]));
   }
 
-  void writeByteListReg(int slaveAddress, int register, Uint8List txBuf) {
-    final _txBuf = malloc.allocate<ffi.Uint8>(txBuf.length + 1);
-    var index = 0;
-
-    _txBuf[index++] = register;
-    for (var value in txBuf) {
-      _txBuf[index++] = value;
-    }
-
-    _native.transmit(_fd, slaveAddress, _txBuf, index);
-
-    malloc.free(_txBuf);
+  Future<void> writeByteListReg(
+      int slaveAddress, int register, Uint8List txBuf) async {
+    final _txBuf = Uint8List.fromList([register]);
+    _txBuf.addAll(txBuf);
+    await transmit(slaveAddress, _txBuf);
   }
 
-  int readByteReg(int slaveAddress, int register) {
-    final _buf = malloc.allocate<ffi.Uint8>(1);
+  Future<int> readByteReg(int slaveAddress, int register) async {
+    final rxBuf =
+        await transceive(slaveAddress, Uint8List.fromList([register]), 1);
+    return rxBuf[0];
+  }
 
-    _buf.value = register;
-
-    _native.transceive(_fd, slaveAddress, _buf, 1, _buf, 1);
-
-    final rxBuf = _buf.value;
-
-    malloc.free(_buf);
-
+  Future<Uint8List> readByteListReg(
+      int slaveAddress, int register, int rxSize) async {
+    final rxBuf =
+        await transceive(slaveAddress, Uint8List.fromList([register]), rxSize);
     return rxBuf;
   }
 
-  Uint8List readByteListReg(int slaveAddress, int register, int rxSize) {
-    final _buf = malloc.allocate<ffi.Uint8>(rxSize);
-    final rxBuf = Uint8List(rxSize);
-
-    _buf.value = register;
-
-    _native.transceive(_fd, slaveAddress, _buf, 1, _buf, rxSize);
-
-    for (var index = 0; index < rxSize; index++) {
-      rxBuf[index] = _buf[index];
-    }
-
-    malloc.free(_buf);
-
-    return rxBuf;
-  }
-
-  void dispose() {
+  Future<void> dispose() async {
     if (_fd >= 0) {
-      _native.dispose(_fd);
+      await LotI2cChannel.dispose(_fd);
       _fd = -1;
     }
   }
