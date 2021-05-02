@@ -4,20 +4,74 @@
 import 'dart:ffi' as ffi;
 
 /// Bindings to `liblot_i2c`
-class LibLotI2c {
+class LotI2cNative {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
       _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  LibLotI2c(ffi.DynamicLibrary dynamicLibrary)
+  LotI2cNative(ffi.DynamicLibrary dynamicLibrary)
       : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  LibLotI2c.fromLookup(
+  LotI2cNative.fromLookup(
       ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
           lookup)
       : _lookup = lookup;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kChannelName =
+      _lookup<ffi.Pointer<ffi.Int8>>('kChannelName');
+
+  ffi.Pointer<ffi.Int8> get kChannelName => _kChannelName.value;
+
+  set kChannelName(ffi.Pointer<ffi.Int8> value) => _kChannelName.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kRuntimeError =
+      _lookup<ffi.Pointer<ffi.Int8>>('kRuntimeError');
+
+  ffi.Pointer<ffi.Int8> get kRuntimeError => _kRuntimeError.value;
+
+  set kRuntimeError(ffi.Pointer<ffi.Int8> value) =>
+      _kRuntimeError.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kInitMethod =
+      _lookup<ffi.Pointer<ffi.Int8>>('kInitMethod');
+
+  ffi.Pointer<ffi.Int8> get kInitMethod => _kInitMethod.value;
+
+  set kInitMethod(ffi.Pointer<ffi.Int8> value) => _kInitMethod.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kDisposeMethod =
+      _lookup<ffi.Pointer<ffi.Int8>>('kDisposeMethod');
+
+  ffi.Pointer<ffi.Int8> get kDisposeMethod => _kDisposeMethod.value;
+
+  set kDisposeMethod(ffi.Pointer<ffi.Int8> value) =>
+      _kDisposeMethod.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kTransmitMethod =
+      _lookup<ffi.Pointer<ffi.Int8>>('kTransmitMethod');
+
+  ffi.Pointer<ffi.Int8> get kTransmitMethod => _kTransmitMethod.value;
+
+  set kTransmitMethod(ffi.Pointer<ffi.Int8> value) =>
+      _kTransmitMethod.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kReceiveMethod =
+      _lookup<ffi.Pointer<ffi.Int8>>('kReceiveMethod');
+
+  ffi.Pointer<ffi.Int8> get kReceiveMethod => _kReceiveMethod.value;
+
+  set kReceiveMethod(ffi.Pointer<ffi.Int8> value) =>
+      _kReceiveMethod.value = value;
+
+  late final ffi.Pointer<ffi.Pointer<ffi.Int8>> _kTransceiveMethod =
+      _lookup<ffi.Pointer<ffi.Int8>>('kTransceiveMethod');
+
+  ffi.Pointer<ffi.Int8> get kTransceiveMethod => _kTransceiveMethod.value;
+
+  set kTransceiveMethod(ffi.Pointer<ffi.Int8> value) =>
+      _kTransceiveMethod.value = value;
 
   int init(
     ffi.Pointer<ffi.Int8> device,
