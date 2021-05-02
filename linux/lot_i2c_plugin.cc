@@ -25,8 +25,9 @@
 
 #include "lot_i2c/lot_i2c.h"
 
+#include <cerrno>     //errno
 #include <cstdlib>    // free(), malloc()
-#include <cstring>
+#include <cstring>    // strcmp(), strerror()
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 
