@@ -28,6 +28,16 @@ extern "C" {
 
 #include <stdint.h>
 
+const char kChannelName[] = "lot_i2c";
+
+const char kRuntimeError[] = "Runtime Error";
+
+const char kInitMethod[]       = "init";
+const char kDisposeMethod[]    = "dispose";
+const char kTransmitMethod[]   = "transmit";
+const char kReceiveMethod[]    = "receive";
+const char kTransceiveMethod[] = "transceive";
+
 int lot_i2c_init(const char *device);
 
 void lot_i2c_dispose(int fd);
